@@ -1,12 +1,12 @@
 package netrunnerEnums;
 
 public enum Set {
-	ANY ("Any", "cards/"), CORE_SET ("Core Set", "set/core"), WHAT_LIES_AHEAD ("What Lies Ahead", "set/wla"), 
-	TRACE_AMOUNT ("Trace Amount", "set/ta"), CYBER_EXODUS ("Cyber Exodus", "set/ce"), A_STUDY_IN_STATIC ("A Study In Static", "set/asis"),
-	HUMANITYS_SHADOW ("Humanity's Shadow", "set/hs"), FUTURE_PROOF ("Future Proof", "set/fp"), CREATION_AND_CONTROL ("Creation And Control", "set/cac"), 
-	OPENING_MOVES ("Opening Moves", "set/om"), SECOND_THOUGHTS ("Second Thoughts", "set/st"), MALA_TEMPORA ("Mala Tempora", "set/mt"),
-	TRUE_COLORS ("True Colors", "set/tc"), FEAR_AND_LOATHING ("Fear And Loathing", "set/fal"), DOUBLE_TIME ("Double Time", "set/dt"), 
-	HONOR_AND_PROFIT ("Honor And Profit", "set/hap"), UPSTALK ("Upstalk", "set/u"), THE_SPACES_BETWEEN ("The Spaces Between", "set/tsb");
+	ANY ("Any", "cards/"), CORE_SET ("Core Set", "core"), WHAT_LIES_AHEAD ("What Lies Ahead", "wla"), 
+	TRACE_AMOUNT ("Trace Amount", "ta"), CYBER_EXODUS ("Cyber Exodus", "ce"), A_STUDY_IN_STATIC ("A Study In Static", "asis"),
+	HUMANITYS_SHADOW ("Humanity's Shadow", "hs"), FUTURE_PROOF ("Future Proof", "fp"), CREATION_AND_CONTROL ("Creation And Control", "cac"), 
+	OPENING_MOVES ("Opening Moves", "om"), SECOND_THOUGHTS ("Second Thoughts", "st"), MALA_TEMPORA ("Mala Tempora", "mt"),
+	TRUE_COLORS ("True Colors", "tc"), FEAR_AND_LOATHING ("Fear And Loathing", "fal"), DOUBLE_TIME ("Double Time", "dt"), 
+	HONOR_AND_PROFIT ("Honor And Profit", "hap"), UPSTALK ("Upstalk", "u"), THE_SPACES_BETWEEN ("The Spaces Between", "tsb");
 	
 	private final String name;
 	private final String setCode;
@@ -20,6 +20,10 @@ public enum Set {
 		return this.name;
 	}
 	
+	public String getSetCode() {
+		return this.setCode;
+	}
+	
 	public static Set fromName(String name) {
 		for (Set s : Set.values()) {
 			if (s.getName().equals(name)) {
@@ -27,9 +31,5 @@ public enum Set {
 			}
 		}
 		return Set.ANY;
-	}
-	
-	public String getSetCode() {
-		return this.setCode;
 	}
 }

@@ -31,7 +31,6 @@ public class Netrunner {
 	public static void main(String[] arg) throws IOException {
 		
 		WindowManager winMan = new WindowManager();
-		
 		IntroWindow iW = new IntroWindow("intro", winMan);
 		winMan.addWindow(iW, true);
 		

@@ -28,8 +28,8 @@ public class SearchForm {
 		side = Side.EITHER;
 		faction = new boolean[8];
 		unique = Unique.ANY;
-		costComparator = "";
-		influenceComparator = "";
+		costComparator = "=";
+		influenceComparator = "=";
 		cost = -1;
 		influence = -1;
 		sortBy = "";
@@ -37,14 +37,22 @@ public class SearchForm {
 	
 	public void getResults() {
 		ArrayList<Card> searchDB = CardDatabase.getCardDatabase();
-		if (!title.equals("")) {searchDB = CardDatabase.searchTitles(searchDB, title);}
-		if (!text.equals("")) {searchDB = CardDatabase.searchTitles(searchDB, text);}
-		if (!flavourText.equals("")) {searchDB = CardDatabase.searchFlavour(searchDB, flavourText);}
-		if (set != Set.ANY) {}
+		if (!title.equals("")) {searchDB = CardDatabase.searchAttribute(searchDB, "title", title);}
+		if (!text.equals("")) {searchDB = CardDatabase.searchAttribute(searchDB, "text", text);}
+		if (!flavourText.equals("")) {searchDB = CardDatabase.searchAttribute(searchDB, "flavour", flavourText);}
+		if (set != Set.ANY) {searchDB = CardDatabase.searchAttribute(searchDB, "set_code", set.getSetCode());}
+		// search for type
+		// search for subtype
+		if (side != Side.EITHER) {searchDB = CardDatabase.searchAttribute(searchDB, "side_code", side.toString());}
+		// search for faction
+		if (unique != Unique.ANY) {searchDB = CardDatabase.searchAttribute(searchDB, "uniqueness", String.valueOf(unique.isUnique()));}
+		if (cost != -1) {searchDB = CardDatabase.searchAttributeWithComparator(searchDB, "cost", cost, costComparator);}
+		if (influence != -1) {searchDB = CardDatabase.searchAttributeWithComparator(searchDB, "factioncost", influence, influenceComparator);}
 		
 		for (Card c : searchDB) {
-			System.out.println(c.getTitle());
+			System.out.println(c.getAttribute("title"));
 		}
+		
 	}
 	
 	public void setTitle(String t) {title = t;}

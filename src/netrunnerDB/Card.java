@@ -7,10 +7,15 @@ public class Card {
 	Map<String, String> attributes = new HashMap<String, String>();
 	
 	public Card(String text) {
+		
 		text = text.replaceAll("\\{", "");
 		text = text.replaceAll("\\}", "");
+		
 		text = text.replaceAll("\":\"", "dataSeparator");
+		text = text.replaceAll("\":(?=[0-9+])", "dataSeparator");
+		
 		text = text.replaceAll("\",\"", "dataSeparator");
+		text = text.replaceAll("(?<=[0-9+]),\"", "dataSeparator");
 		boolean isKey = true;
 		String[] attributesArray = text.split("dataSeparator");
 		String key = "";
@@ -26,12 +31,5 @@ public class Card {
 	}
 	
 	// all cards should have these attributes
-	public String getTitle() {return attributes.get("title");}
-	public String getFlavour() {return attributes.get("flavour");}
-	public String getText() {return attributes.get("text");}
-	public String getCode() {return attributes.get("code");}
-	public String getType() {return attributes.get("type");}
-	public String getFaction() {return attributes.get("faction");}
-	public String getSetCode() {return attributes.get("set_code");}
-	public String getSide() {return attributes.get("side");}
+	public String getAttribute(String attributeKey) {return attributes.get(attributeKey);}
 }

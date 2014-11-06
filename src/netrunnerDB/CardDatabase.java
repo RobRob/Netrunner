@@ -31,31 +31,35 @@ public class CardDatabase {
 		return cardList;
 	}
 	
-	public static ArrayList<Card> searchTitles(ArrayList<Card> cardsToSearch, String targetString) {
+	public static ArrayList<Card> searchAttribute(ArrayList<Card> cardsToSearch, String attribute, String targetString) {
 		ArrayList<Card> returnList = new ArrayList<Card>();
+		String att;
 		for (Card c : cardsToSearch) {
-			if (c.getTitle().toLowerCase().contains(targetString.toLowerCase())) {
-				returnList.add(c);
+			if ((att = c.getAttribute(attribute))!= null) {
+				if (att.toLowerCase().contains(targetString.toLowerCase())) {
+					returnList.add(c);
+				}
 			}
 		}
 		return returnList;
 	}
 	
-	public static ArrayList<Card> searchText(ArrayList<Card> cardsToSearch, String targetString) {
+	public static ArrayList<Card> searchAttributeWithComparator(ArrayList<Card> cardsToSearch, String attribute, int targetInt, String comparator) {
 		ArrayList<Card> returnList = new ArrayList<Card>();
+		String att; 
+		int intAtt;
 		for (Card c : cardsToSearch) {
-			if (c.getText().toLowerCase().contains(targetString.toLowerCase())) {
-				returnList.add(c);
-			}
-		}
-		return returnList;
-	}
-	
-	public static ArrayList<Card> searchFlavour(ArrayList<Card> cardsToSearch, String targetString) {
-		ArrayList<Card> returnList = new ArrayList<Card>();
-		for (Card c : cardsToSearch) {
-			if (c.getFlavour().toLowerCase().contains(targetString.toLowerCase())) {
-				returnList.add(c);
+			if ((att = c.getAttribute(attribute)) != null) {
+				intAtt = Integer.parseInt(att);
+				if (comparator.equals("=")) {
+					if (intAtt == targetInt) {returnList.add(c);}
+				}
+				else if (comparator.equals(">")) {
+					if (intAtt > targetInt) {returnList.add(c);}
+				}
+				else if (comparator.equals("<")) {
+					if (intAtt < targetInt) {returnList.add(c);}
+				}
 			}
 		}
 		return returnList;
