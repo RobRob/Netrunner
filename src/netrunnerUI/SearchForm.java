@@ -35,7 +35,7 @@ public class SearchForm {
 		this.sortBy = sortBy;
 	}
 	
-	public void getResults() {
+	public ArrayList<Card> getResults() {
 		ArrayList<Card> searchDB = CardDatabase.getCardDatabase();
 		if (!title.equals("")) {searchDB = CardDatabase.searchAttribute(searchDB, "title", title);}
 		if (!text.equals("")) {searchDB = CardDatabase.searchAttribute(searchDB, "text", text);}
@@ -64,6 +64,8 @@ public class SearchForm {
 		for (Card c : searchDB) {
 			System.out.println(c.getAttribute("title"));
 		}
+		
+		return searchDB;
 		
 	}
 	

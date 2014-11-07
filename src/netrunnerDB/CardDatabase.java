@@ -3,6 +3,9 @@ import java.net.*;
 import java.util.*;
 import java.io.*;
 
+import javax.imageio.ImageIO;
+import java.awt.image.*;
+
 public class CardDatabase {
 	
 	public static ArrayList<Card> getCardDatabase() {
@@ -63,5 +66,24 @@ public class CardDatabase {
 			}
 		}
 		return returnList;
+	}
+	
+	public static ArrayList<BufferedImage> getCardImages(ArrayList<Card> cardsToImage) {
+		ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
+		String URLPath = "http://netrunnerdb.com/web/bundles/netrunnerdbcards/images/cards/en/";
+		URL imageURL;
+		for (Card c : cardsToImage) {
+			try {
+			imageURL = new URL(URLPath+c.getAttribute("code") + ".png");
+			images.add(ImageIO.read(imageURL));
+			}
+			catch (MalformedURLException e) {
+				System.out.println("Something went wrong with the card to image conversion URL");
+				imageURL = null;
+			} catch (IOException e) {
+				System.out.println("IOException converting the url into image data");
+			}
+		}
+		return images;
 	}
 }
