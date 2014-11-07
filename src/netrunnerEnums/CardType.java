@@ -1,16 +1,25 @@
 package netrunnerEnums;
 
-public enum Type {
+public enum CardType {
 	ANY("Any"), AGENDA("Agenda"), ASSET("Asset"), EVENT("Event"), HARDWARE("Hardware"), ICE("Ice"), 
 	IDENTITY("Identity"), OPERATION("Operation"), PROGRAM("Program"), RESOURCE("Resource"), UPGRADE("Upgrade");
 	
 	private String name;
 	
-	Type(String n) {
+	CardType(String n) {
 		name = n;
 	}
 	
 	public String getName() {
 		return name;
+	}
+	
+	public static CardType fromName(String name) {
+		for (CardType s : CardType.values()) {
+			if (s.getName().equals(name)) {
+				return s;
+			}
+		}
+		return CardType.ANY;
 	}
 }

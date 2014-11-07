@@ -1,38 +1,38 @@
 package netrunnerUI;
 
-import netrunnerCode.*;
 import netrunnerDB.CardDatabase;
-import netrunnerEnums.Set;
-import netrunnerEnums.Side;
-import netrunnerEnums.Unique;
+import netrunnerEnums.*;
 import netrunnerDB.*;
 import java.util.*;
 
 public class SearchForm {
 	
-	String title, text, flavourText, type, subtype, sortBy;
-	Set set;
+	String title, text, flavourText, sortBy;
+	CardType type;
+	Subtype subtype;
+	CardSet set;
 	Side side;
-	boolean[] faction;
+	Map<Faction, Boolean> factions;
 	Unique unique;
 	String costComparator, influenceComparator;
 	int cost, influence;
 	
-	public SearchForm() {
-		title = "";
-		text = "";
-		flavourText = "";
-		set = Set.ANY;
-		type = "any";
-		subtype = "any";
-		side = Side.EITHER;
-		faction = new boolean[8];
-		unique = Unique.ANY;
-		costComparator = "=";
-		influenceComparator = "=";
-		cost = -1;
-		influence = -1;
-		sortBy = "";
+	public SearchForm(String title, String text, String flavour, CardSet set, CardType type, Subtype subtype, Side side, Map<Faction, Boolean> factions,
+			Unique unique, String costComparator, String influenceComparator, int cost, int influence, String sortBy) {
+		this.title = title;
+		this.text = text;
+		this.flavourText = flavour;
+		this.set = set;
+		this.type = type;
+		this.subtype = subtype;
+		this.side = side;
+		this.factions = factions;
+		this.unique = unique;
+		this.costComparator = costComparator;
+		this.influenceComparator = influenceComparator;
+		this.cost = cost;
+		this.influence = influence;
+		this.sortBy = sortBy;
 	}
 	
 	public void getResults() {
@@ -40,14 +40,26 @@ public class SearchForm {
 		if (!title.equals("")) {searchDB = CardDatabase.searchAttribute(searchDB, "title", title);}
 		if (!text.equals("")) {searchDB = CardDatabase.searchAttribute(searchDB, "text", text);}
 		if (!flavourText.equals("")) {searchDB = CardDatabase.searchAttribute(searchDB, "flavour", flavourText);}
-		if (set != Set.ANY) {searchDB = CardDatabase.searchAttribute(searchDB, "set_code", set.getSetCode());}
-		// search for type
-		// search for subtype
+		if (set != CardSet.ANY) {searchDB = CardDatabase.searchAttribute(searchDB, "set_code", set.getSetCode());}
+		if (type != CardType.ANY) {searchDB = CardDatabase.searchAttribute(searchDB, "type", type.getName());}
+		if (subtype != Subtype.ANY) {searchDB = CardDatabase.searchAttribute(searchDB, "subtype", subtype.getName());}
 		if (side != Side.EITHER) {searchDB = CardDatabase.searchAttribute(searchDB, "side_code", side.toString());}
-		// search for faction
 		if (unique != Unique.ANY) {searchDB = CardDatabase.searchAttribute(searchDB, "uniqueness", String.valueOf(unique.isUnique()));}
 		if (cost != -1) {searchDB = CardDatabase.searchAttributeWithComparator(searchDB, "cost", cost, costComparator);}
 		if (influence != -1) {searchDB = CardDatabase.searchAttributeWithComparator(searchDB, "factioncost", influence, influenceComparator);}
+		
+		ArrayList<Card> factionSearch = new ArrayList<Card>();
+		boolean factionSpecified = false;
+		for (Map.Entry<Faction, Boolean> f : factions.entrySet()) {
+			if (f.getValue()) {
+				// Concatenates separate searches for specific factions into an overall search for multiple factions
+				factionSearch.addAll(CardDatabase.searchAttribute(searchDB, "faction_letter", f.getKey().getFactionCode()));
+				factionSpecified = true;
+			}
+		}
+		if (factionSpecified) {searchDB = factionSearch;}
+		// only sets the search to the result if the user wanted to search at least one faction, to prevent
+		// searches for factions being mandatory when the user doesn't want to
 		
 		for (Card c : searchDB) {
 			System.out.println(c.getAttribute("title"));
@@ -55,32 +67,11 @@ public class SearchForm {
 		
 	}
 	
-	public void setTitle(String t) {title = t;}
-	public void setText(String t) {text = t;}
-	public void setFlavourText(String f) {flavourText = f;}
-	public void setSide(netrunnerEnums.Side s) {side = s;}
-	
-	public void setFaction(int f) {faction[f] = true;}
-	public void removeFaction(int f) {faction[f] = false;}
-	
-	public void setUnique(netrunnerEnums.Unique u) {unique = u;}
-	public void setSet(String s) {set = Set.fromName(s);}
-	public void setType(Object t) {type = (String)t;}
-	public void setSubType(Object t) {subtype = (String)t;}
-	
-	public void setCostComparator(Object c) {costComparator = (String)c;}
-	public void setCost(int c) {cost = c;}
-	
-	public void setInfluenceComparator(Object i) {influenceComparator = (String)i;}
-	public void setInfluence(int i) {influence = i;}
-	
-	public void setSortBy(Object s) {sortBy = (String)s;}
-	
 	public String toString() {
 		String returnString = "";
 		returnString += title + text + flavourText + set + type + subtype + sortBy + side;
-		for (boolean f : faction) {
-			returnString += f;
+		for (Map.Entry<Faction, Boolean> f : factions.entrySet()) {
+			returnString += f.getValue();
 		}
 		returnString += unique + costComparator + influenceComparator + cost + influence;
 		return returnString;

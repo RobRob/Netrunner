@@ -1,6 +1,6 @@
 package netrunnerEnums;
 
-public enum Set {
+public enum CardSet {
 	ANY ("Any", "cards/"), CORE_SET ("Core Set", "core"), WHAT_LIES_AHEAD ("What Lies Ahead", "wla"), 
 	TRACE_AMOUNT ("Trace Amount", "ta"), CYBER_EXODUS ("Cyber Exodus", "ce"), A_STUDY_IN_STATIC ("A Study In Static", "asis"),
 	HUMANITYS_SHADOW ("Humanity's Shadow", "hs"), FUTURE_PROOF ("Future Proof", "fp"), CREATION_AND_CONTROL ("Creation And Control", "cac"), 
@@ -11,7 +11,7 @@ public enum Set {
 	private final String name;
 	private final String setCode;
 	
-	Set(String n, String sC) {
+	CardSet(String n, String sC) {
 		this.name = n;
 		this.setCode = sC;
 	}
@@ -24,12 +24,12 @@ public enum Set {
 		return this.setCode;
 	}
 	
-	public static Set fromName(String name) {
-		for (Set s : Set.values()) {
+	public static CardSet fromName(String name) {
+		for (CardSet s : CardSet.values()) {
 			if (s.getName().equals(name)) {
 				return s;
 			}
 		}
-		return Set.ANY;
+		return CardSet.ANY;
 	}
 }

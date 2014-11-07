@@ -1,5 +1,6 @@
 package netrunnerUI;
 import netrunnerCode.*;
+import netrunnerEnums.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -8,6 +9,8 @@ import java.io.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import java.util.*;
 
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame{
@@ -19,7 +22,6 @@ public class MainWindow extends JFrame{
 	public MainWindow(String name, WindowManager wM) throws IOException {
 		windowName = name;
 		windowManager = wM;
-		search = new SearchForm();
 		
 		setTitle("HQ");
 		setLocation(new Point(Netrunner.screenDimensions.width/4, Netrunner.screenDimensions.height/4));
@@ -215,16 +217,16 @@ public class MainWindow extends JFrame{
 		c.gridwidth = 1;
 		searchBar.add(neutralCB, c);
 		
-				// Nested Container for Card Set Association (Core/Data Pack/Deluxe Expansion)
+				// Nested Container for Card CardSet Association (Core/Data Pack/Deluxe Expansion)
 		
 				Container cardSetContainer = new Container();
 				cardSetContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
 				
-				JLabel setL = new JLabel("Set: ");
+				JLabel setL = new JLabel("CardSet: ");
 				cardSetContainer.add(setL);
 	
 				final JComboBox<String> setDB = new JComboBox<String>();
-				for (String setName : Netrunner.sets) {setDB.addItem(setName);}
+				for (CardSet cS : CardSet.values()) {setDB.addItem(cS.getName());}
 				cardSetContainer.add(setDB);
 				c.gridx = 0;
 				c.gridy = 13;
@@ -233,16 +235,16 @@ public class MainWindow extends JFrame{
 				searchBar.add(cardSetContainer, c);
 				
 				
-				// Nested Container for Type Keywords
+				// Nested Container for CardType Keywords
 				
 				Container typeContainer = new Container();
 				typeContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
 				
-				JLabel typeL = new JLabel("Type: ");
+				JLabel typeL = new JLabel("CardType: ");
 				typeContainer.add(typeL);
 	
 				final JComboBox<String> typeDB = new JComboBox<String>();
-				for (String typeName : Netrunner.types) {typeDB.addItem(typeName);
+				for (CardType cT : CardType.values()) {typeDB.addItem(cT.getName());
 				typeContainer.add(typeDB);
 				
 				c.gridx = 0;
@@ -261,7 +263,7 @@ public class MainWindow extends JFrame{
 				subtypeContainer.add(subtypeL);
 	
 				final JComboBox<String> subtypeDB = new JComboBox<String>();
-				for (String subtypeName : Netrunner.subtypes) {subtypeDB.addItem(subtypeName);}
+				for (Subtype s : Subtype.values()) {subtypeDB.addItem(s.getName());}
 				subtypeContainer.add(subtypeDB);
 				
 				c.gridx = 0;
@@ -359,9 +361,9 @@ public class MainWindow extends JFrame{
 	
 			final JComboBox<String> sortByDB = new JComboBox<String>();
 			sortByDB.addItem("Name");
-			sortByDB.addItem("Set");
+			sortByDB.addItem("CardSet");
 			sortByDB.addItem("Faction");
-			sortByDB.addItem("Type");
+			sortByDB.addItem("CardType");
 			sortByDB.addItem("Cost");
 			sortByContainer.add(sortByDB);
 			
@@ -378,53 +380,55 @@ public class MainWindow extends JFrame{
 	
 	searchButton.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent e) {
-			search.setTitle(cardTitleTF.getText());
-			search.setText(cardTextTF.getText());
-			search.setFlavourText(cardFlavourTextTF.getText());
 			
-			if (eitherRB.isSelected()) {search.setSide(netrunnerEnums.Side.EITHER);}
-			else if (corpRB.isSelected()) {search.setSide(netrunnerEnums.Side.CORP);}
-			else if (runnerRB.isSelected()) {search.setSide(netrunnerEnums.Side.RUNNER);}
+			Side selectedSide = Side.EITHER;
+			if (corpRB.isSelected()) {selectedSide = Side.CORP;}
+			else if (runnerRB.isSelected()) {selectedSide = Side.RUNNER;}
 			
-			if (anarchCB.isSelected()) {search.setFaction(0);}
-			else {search.removeFaction(0);}
-			if (criminalCB.isSelected()) {search.setFaction(1);}
-			else {search.removeFaction(1);}
-			if (shaperCB.isSelected()) {search.setFaction(2);}
-			else {search.removeFaction(2);}
-			if (haasbioroidCB.isSelected()) {search.setFaction(3);}
-			else {search.removeFaction(3);}
-			if (jintekiCB.isSelected()) {search.setFaction(4);}
-			else {search.removeFaction(4);}
-			if (nbnCB.isSelected()) {search.setFaction(5);}
-			else {search.removeFaction(5);}
-			if (weylandCB.isSelected()) {search.setFaction(6);}
-			else {search.removeFaction(6);}
-			if (neutralCB.isSelected()) {search.setFaction(7);}
-			else {search.removeFaction(7);}
+			Map<Faction, Boolean> selectedFactions = new HashMap<Faction, Boolean>();
+			if (anarchCB.isSelected()) {selectedFactions.put(Faction.ANARCH, true);}
+			else {selectedFactions.put(Faction.ANARCH, false);}
+			if (criminalCB.isSelected()) {selectedFactions.put(Faction.CRIMINAL, true);}
+			else {selectedFactions.put(Faction.CRIMINAL, false);}
+			if (shaperCB.isSelected()) {selectedFactions.put(Faction.SHAPER, true);}
+			else {selectedFactions.put(Faction.SHAPER, false);}
+			if (haasbioroidCB.isSelected()) {selectedFactions.put(Faction.HAAS_BIOROID, true);}
+			else {selectedFactions.put(Faction.HAAS_BIOROID, false);}
+			if (jintekiCB.isSelected()) {selectedFactions.put(Faction.JINTEKI, true);}
+			else {selectedFactions.put(Faction.JINTEKI, false);}
+			if (nbnCB.isSelected()) {selectedFactions.put(Faction.NBN, true);}
+			else {selectedFactions.put(Faction.NBN, false);}
+			if (weylandCB.isSelected()) {selectedFactions.put(Faction.WEYLAND, true);}
+			else {selectedFactions.put(Faction.WEYLAND, false);}
+			if (neutralCB.isSelected()) {selectedFactions.put(Faction.NEUTRAL, true);}
+			else {selectedFactions.put(Faction.NEUTRAL, false);}
 			
-			search.setSet((String)setDB.getSelectedItem());
-			search.setType(typeDB.getSelectedItem());
-			search.setSubType(subtypeDB.getSelectedItem());
+			CardSet selectedSet = CardSet.fromName((String)setDB.getSelectedItem());
+			CardType selectedType = CardType.fromName((String)typeDB.getSelectedItem());
+			Subtype selectedSubtype = Subtype.fromName((String)subtypeDB.getSelectedItem());
 			
-			if (uniqueEitherRB.isSelected()) {search.setUnique(netrunnerEnums.Unique.ANY);}
-			else if (uniqueYesRB.isSelected()) {search.setUnique(netrunnerEnums.Unique.YES);}
-			else if (uniqueNoRB.isSelected()) {search.setUnique(netrunnerEnums.Unique.NO);}
+			Unique selectedUnique = Unique.ANY;
+			if (uniqueYesRB.isSelected()) {selectedUnique = Unique.YES;}
+			else if (uniqueNoRB.isSelected()) {selectedUnique = Unique.NO;}
 			
-			search.setCostComparator(costComparatorDB.getSelectedItem());
+			String costComparator = (String)costComparatorDB.getSelectedItem();
+			String influenceComparator = (String)influenceComparatorDB.getSelectedItem();
 			
+			int cost = -1;
 			if (!costTF.getText().equals("")) {
-				search.setCost(Integer.parseInt(costTF.getText()));
+				cost = Integer.parseInt(costTF.getText());
 			}
 			
-			
-			search.setInfluenceComparator(influenceComparatorDB.getSelectedItem());
-			
+			int influence = -1;
 			if (!influenceTF.getText().equals("")) {
-				search.setInfluence(Integer.parseInt(influenceTF.getText()));
+				influence = Integer.parseInt(influenceTF.getText());
 			}
 			
-			search.setSortBy(sortByDB.getSelectedItem());
+			String sortBy = (String)sortByDB.getSelectedItem();
+			
+			SearchForm search = new SearchForm(cardTitleTF.getText(), cardTextTF.getText(), cardFlavourTextTF.getText(),
+												selectedSet, selectedType, selectedSubtype, selectedSide, selectedFactions,
+												selectedUnique, costComparator, influenceComparator, cost, influence, sortBy);
 			
 			search.getResults();
 			
